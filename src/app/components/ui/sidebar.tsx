@@ -509,17 +509,23 @@ function SidebarMenuButton({
 } & VariantProps<typeof sidebarMenuButtonVariants>) {
   const { isMobile, state } = useSidebar();
 
+  // 剥离 ref：React 18 的 LegacyRef 与 Radix（React 19 风格）的 Ref 不兼容，
+  // 此处显式取出并单独传递，避免类型冲突
+  const { ref: buttonRef, ...restProps } = props as React.ComponentProps<"button"> & {
+    ref?: React.Ref<HTMLButtonElement>;
+  };
+
   const buttonProps = {
     "data-slot": "sidebar-menu-button",
     "data-sidebar": "menu-button",
     "data-size": size,
     "data-active": isActive,
     className: cn(sidebarMenuButtonVariants({ variant, size }), className),
-    ...props,
+    ...restProps,
   };
 
   if (!tooltip) {
-    return <button {...buttonProps} />;
+    return <button ref={buttonRef} {...buttonProps} />;
   }
 
   if (typeof tooltip === "string") {
@@ -530,7 +536,7 @@ function SidebarMenuButton({
 
   return (
     <Tooltip>
-      <TooltipTrigger {...buttonProps} />
+      <TooltipTrigger ref={buttonRef} {...buttonProps} />
       <TooltipContent
         side="right"
         align="center"

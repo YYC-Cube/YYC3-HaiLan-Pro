@@ -56,7 +56,9 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             })}
           </span>
           {!isUser && (
-            <Lock className="w-3 h-3 text-success" title="端到端加密" />
+            <Lock className="w-3 h-3 text-success" aria-label="端到端加密">
+              <title>端到端加密</title>
+            </Lock>
           )}
         </div>
       </div>

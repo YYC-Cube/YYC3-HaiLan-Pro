@@ -9,9 +9,11 @@ interface BrandLogoProps {
   variant?: 'icon' | 'full';
   className?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** 隐私模式等深色背景下反白显示 */
+  invert?: boolean;
 }
 
-export function BrandLogo({ variant = 'full', className = '', size = 'md' }: BrandLogoProps) {
+export function BrandLogo({ variant = 'full', className = '', size = 'md', invert = false }: BrandLogoProps) {
   const sizeClasses = {
     sm: variant === 'icon' ? 'w-8 h-8' : 'h-8',
     md: variant === 'icon' ? 'w-12 h-12' : 'h-10',
@@ -26,7 +28,7 @@ export function BrandLogo({ variant = 'full', className = '', size = 'md' }: Bra
       <img
         src={src}
         alt="Brand Logo"
-        className={`object-contain ${sizeClasses[size]}`}
+        className={`object-contain ${sizeClasses[size]} ${invert ? 'brightness-0 invert' : ''}`}
       />
     </div>
   );

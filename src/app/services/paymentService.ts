@@ -273,7 +273,7 @@ export class PaymentService {
   private static verifySignature(data: PaymentCallbackData): boolean {
     // 实际项目中应该使用真实的签名验证算法
     // 这里仅作演示
-    return data.signature && data.signature.length > 0;
+    return Boolean(data.signature && data.signature.length > 0);
   }
   
   /**

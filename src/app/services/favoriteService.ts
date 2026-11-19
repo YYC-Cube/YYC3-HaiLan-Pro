@@ -44,7 +44,7 @@ export class FavoriteService {
    */
   static async addFavorite(
     productId: string,
-    productData: Omit<FavoriteItem, 'id' | 'createdAt'>
+    productData: Omit<FavoriteItem, 'id' | 'createdAt' | 'productId'>
   ): Promise<FavoriteItem> {
     try {
       const favorites = this.getFavorites();

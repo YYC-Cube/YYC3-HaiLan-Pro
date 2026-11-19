@@ -25,19 +25,26 @@ export function EdgeInferencePanel() {
   // Realtime subscription to system status
   useEffect(() => {
     let isSubscribed = true;
-    const channel = supabase.channel('system-status')
-      .on('broadcast', { event: 'status-update' }, (payload) => {
-        if (isSubscribed && payload.status) {
-            setSystemStatus(payload.status);
-            setIsOffline(payload.status === "OFFLINE");
+    let channel: ReturnType<NonNullable<typeof supabase>['channel']> | null = null;
+
+    // 凭证未配置时 supabase 为 null：跳过实时订阅，降级为本地状态模拟
+    if (supabase) {
+      channel = supabase.channel('system-status')
+        .on('broadcast', { event: 'status-update' }, (payload) => {
+          if (isSubscribed && payload.status) {
+              setSystemStatus(payload.status);
+              setIsOffline(payload.status === "OFFLINE");
+          }
+        });
+
+      channel.subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('[Realtime] Subscribed to system-status');
         }
       });
-
-    channel.subscribe((status) => {
-      if (status === 'SUBSCRIBED') {
-        console.log('[Realtime] Subscribed to system-status');
-      }
-    });
+    } else {
+      console.info('[Realtime] 未配置后端凭证，运行于本地边缘模拟模式');
+    }
 
     const heartbeat = setInterval(() => {
         if (isSubscribed && Math.random() > 0.7) {
@@ -50,9 +57,11 @@ export function EdgeInferencePanel() {
 
     return () => {
         isSubscribed = false;
-        supabase.removeChannel(channel).catch(err => {
-          console.warn('[Realtime] Error removing channel:', err);
-        });
+        if (channel && supabase) {
+          supabase.removeChannel(channel).catch(err => {
+            console.warn('[Realtime] Error removing channel:', err);
+          });
+        }
         clearInterval(heartbeat);
     };
   }, []);

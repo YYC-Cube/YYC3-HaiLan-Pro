@@ -1,8 +1,30 @@
-import { Product } from './mockData';
+/**
+ * 收藏列表专用的商品视图模型
+ * 收藏场景只需展示核心字段，与商城全量 Product 模型解耦
+ */
+export interface FavoriteProduct {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  originalPrice?: number;
+  /** 折扣百分比 */
+  discount?: number;
+  /** 单图简写 */
+  image?: string;
+  rating: number;
+  reviewCount: number;
+  arEnabled?: boolean;
+  features: string[];
+  inStock?: boolean;
+  /** 角标文案 */
+  badge?: string;
+  description: string;
+}
 
 export interface FavoriteItem {
   id: string;
-  product: Product;
+  product: FavoriteProduct;
   addedAt: string;
   note?: string;
 }
@@ -77,7 +99,7 @@ export function isFavorited(productId: string, favorites: FavoriteItem[]): boole
 // Helper function to toggle favorite
 export function toggleFavorite(
   productId: string, 
-  product: Product, 
+  product: FavoriteProduct, 
   favorites: FavoriteItem[]
 ): FavoriteItem[] {
   const isFav = isFavorited(productId, favorites);

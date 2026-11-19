@@ -37,10 +37,14 @@ const buttonVariants = cva(
 );
 
 // Add motion props support
-type MotionButtonProps = HTMLMotionProps<"button"> & VariantProps<typeof buttonVariants> & {
-  isLoading?: boolean;
-  as?: keyof JSX.IntrinsicElements;
-};
+// 注意：Omit 掉 HTMLMotionProps 的 children 并收窄为 ReactNode —— framer-motion 的
+// children 允许 MotionValue，但按钮内容只应为普通 React 节点
+type MotionButtonProps = Omit<HTMLMotionProps<"button">, "children"> &
+  VariantProps<typeof buttonVariants> & {
+    isLoading?: boolean;
+    as?: keyof JSX.IntrinsicElements;
+    children?: React.ReactNode;
+  };
 
 const Button = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
   ({ className, variant, size, isLoading, children, as = "button", ...props }, ref) => {

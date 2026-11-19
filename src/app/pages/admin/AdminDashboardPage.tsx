@@ -182,7 +182,7 @@ export function AdminDashboardPage() {
     yellow: { bg: 'bg-yellow-100', text: 'text-yellow-600', icon: 'text-yellow-600' }
   };
 
-  const severityMap = {
+  const severityMap: Record<string, { color: string; label: string }> = {
     high: { color: 'red', label: '高' },
     medium: { color: 'yellow', label: '中' },
     low: { color: 'blue', label: '低' }

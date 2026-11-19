@@ -34,12 +34,25 @@ HaiLan Pro (海蓝) 是新一代高端、私密、智能的情趣健康生活管
 
 ### 技术栈
 
-- **前端**：Uni-app (Vue 3.5+ TypeScript) + Vite 6.x + Pinia
-- **后端**：NestJS 10.x + Node.js 20 LTS
-- **数据库**：PostgreSQL 16 + MongoDB 17 + Redis
-- **消息队列**：RabbitMQ
-- **容器化**：Docker + Kubernetes (K8s)
-- **AI集成**：LangChain + OpenAI API / 国产大模型
+> ⚠️ **2026-11-19 校正**：以下为规划阶段技术栈（未落地）；实际代码技术栈见下方「实际实现技术栈」。
+
+- **规划前端**：Uni-app (Vue 3.5+ TypeScript) + Vite 6.x + Pinia
+- **规划后端**：NestJS 10.x + Node.js 20 LTS
+- **规划数据库**：PostgreSQL 16 + MongoDB 17 + Redis
+- **规划消息队列**：RabbitMQ
+- **规划容器化**：Docker + Kubernetes (K8s)
+- **规划 AI 集成**：LangChain + OpenAI API / 国产大模型
+
+#### 实际实现技术栈（2026-11-19 经源码核实）
+
+- **前端**：React 18.2.0 + Vite 6.3.5 + TypeScript 严格模式
+- **UI**：MUI 6.4.0 + Radix UI + Tailwind CSS 4.1.12 + Framer Motion 10.18
+- **路由**：react-router 6.30.3（MemoryRouter）
+- **后端/BaaS**：Supabase（`@supabase/supabase-js` ^2.93.3）+ Deno Edge Functions
+- **数据持久化**：React Context + localStorage；IndexedDB（Service Worker）
+- **形态**：PWA；部署目标 Vercel
+- **说明**：规划栈（NestJS/PG16/Mongo/Redis/K8s）与实际栈存在重大偏差，详见
+  [《YYC3-首次技术调研与文档架构审核报告》](./YYC3-首次技术调研与文档架构审核报告.md) §二、§六 Q-01。
 
 ## 文档结构
 
@@ -83,18 +96,34 @@ API接口文档，包含通用规范、业务域接口（用户端、商城、�
 
 ## 快速导航
 
-- [需求规划](./需求规划/README.md)
-- [项目规划](./项目规划/README.md)
-- [架构设计](./架构设计/README.md)
-- [详细设计](./详细设计/README.md)
-- [API文档](./API文档/README.md)
-- [类型定义](./类型定义/README.md)
-- [开发规范](./开发规范/README.md)
-- [审核测试](./审核测试/README.md)
-- [部署运维](./部署运维/README.md)
-- [用户文档](./用户文档/README.md)
-- [运营管理](./运营管理/README.md)
-- [附录参考](./附录参考/README.md)
+> 📌 **首次调研成果（2026-11-19）**：[技术调研与文档架构审核报告](./YYC3-首次技术调研与文档架构审核报告.md) · [文档迁移清单与回滚手册](./YYC3-文档迁移清单与回滚手册.md) · [自研架构迁移可行性评估](./YYC3-自研架构迁移可行性评估.md) · [P0 凭证整改实施报告](./YYC3-P0凭证整改实施报告.md) · [Q-A 架构决议草案](./YYC3-QA架构决议草案.md) · [R-01 密钥轮换手册](./YYC3-anon密钥轮换操作手册.md) · [设计系统使用规范](./YYC3-设计系统-使用规范与组件索引.md)
+
+### 新增规分类（本次整理建立）
+
+- [00 项目总览·目录索引](./00-YYC3-项目总览-目录索引/)
+- [03 项目开发·实施报告](./03-YYC3-项目开发-实施报告/)
+- [04 项目测试·审核报告](./04-YYC3-项目测试-审核报告/)
+
+### 既有分类（链接已按实际目录名校正）
+
+- [需求规划](./HaiLan-Pro-需求规划/README.md)
+- [项目规划](./HaiLan-Pro-项目规划/README.md)
+- [架构设计](./HaiLan-Pro-架构设计/README.md)
+- [详细设计](./HaiLan-Pro-详细设计/README.md)
+- [API文档](./HaiLan-Pro-API文档/README.md)
+- [类型定义](./HaiLan-Pro-类型定义/README.md)
+- [开发规范](./HaiLan-Pro-开发规范/README.md)
+- [审核测试](./HaiLan-Pro-审核测试/README.md)
+- [部署运维](./HaiLan-Pro-部署运维/README.md)
+- [用户文档](./HaiLan-Pro-用户文档/README.md)
+- [运营管理](./HaiLan-Pro-运营管理/README.md)
+- [附录参考](./HaiLan-Pro-附录参考/README.md)
+
+### 团队通用与验收
+
+- [团队通用·标规文档](./YYC3-团队通用-标规文档/README.md)
+- [团队通用·开发指南](./YYC3-团队通用-开发指南/README.md)
+- [项目闭环·验收系统](./YYC3-项目闭环-验收系统/README.md)
 
 ## YYC³ 核心理念
 

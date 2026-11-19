@@ -8,9 +8,13 @@ export interface Product {
   description: string;
   price: number;
   originalPrice?: number;
+  /** 折扣百分比（如 19 表示 9 折） */
+  discount?: number;
   rating: number;
   reviewCount: number;
   images: string[];
+  /** 单图简写，用于收藏列表等轻量场景 */
+  image?: string;
   mainCategory: MainCategoryType;
   category: string; // Sub-category
   tags: string[];
@@ -22,6 +26,10 @@ export interface Product {
   boxContent?: string[];
   cleaningInstructions?: string;
   arEnabled?: boolean;
+  /** 库存状态；缺省视为有货 */
+  inStock?: boolean;
+  /** 角标文案（如 Bestseller / New） */
+  badge?: string;
 }
 
 export interface Category {

@@ -27,7 +27,8 @@ import {
   Coins,
   History,
   LayoutDashboard,
-  X
+  X,
+  Zap
 } from 'lucide-react';
 import { cn } from '@/app/components/design-system/utils';
 import { GlassCard } from '@/app/components/design-system/GlassCard';

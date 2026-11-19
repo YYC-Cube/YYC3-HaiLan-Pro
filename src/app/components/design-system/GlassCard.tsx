@@ -2,9 +2,11 @@ import * as React from "react";
 import { cn } from "./utils";
 import { motion, HTMLMotionProps } from "framer-motion";
 
-export interface GlassCardProps extends HTMLMotionProps<"div"> {
+export interface GlassCardProps extends Omit<HTMLMotionProps<"div">, "children"> {
   hoverEffect?: boolean;
   active?: boolean;
+  /** 卡片内容 —— 收窄为 ReactNode，不接受 framer-motion 的 MotionValue */
+  children?: React.ReactNode;
 }
 
 export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
@@ -16,9 +18,9 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        whileHover={hoverEffect ? { 
-          y: -4, 
-          boxShadow: "0 20px 40px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)" 
+        whileHover={hoverEffect ? {
+          y: -4,
+          boxShadow: "0 20px 40px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)"
         } : {}}
         className={cn(
           "relative overflow-hidden rounded-2xl border backdrop-blur-md transition-all duration-300",
@@ -33,8 +35,8 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
         {hoverEffect && (
           <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
         )}
-        
-        {children}
+
+        {children as React.ReactNode}
       </motion.div>
     );
   }
@@ -42,8 +44,10 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
 GlassCard.displayName = "GlassCard";
 
 // Interactive List Item Component
-export interface InteractiveListItemProps extends HTMLMotionProps<"li"> {
+export interface InteractiveListItemProps extends Omit<HTMLMotionProps<"li">, "children"> {
   active?: boolean;
+  /** 列表项内容 —— 收窄为 ReactNode，不接受 framer-motion 的 MotionValue */
+  children?: React.ReactNode;
 }
 
 export const InteractiveListItem = React.forwardRef<HTMLLIElement, InteractiveListItemProps>(

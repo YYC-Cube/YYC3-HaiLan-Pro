@@ -342,7 +342,9 @@ export function SupplyChainPage() {
                               {order.orderNumber}
                             </span>
                             {order.aiGenerated && (
-                              <Sparkles className="w-4 h-4 text-purple-600" title="AI生成" />
+                              <Sparkles className="w-4 h-4 text-purple-600" aria-label="AI生成">
+                                <title>AI生成</title>
+                              </Sparkles>
                             )}
                           </div>
                           <div className="text-xs text-text-tertiary mt-1">{order.createdAt}</div>

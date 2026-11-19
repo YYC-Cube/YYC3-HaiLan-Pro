@@ -1,0 +1,91 @@
+# ============================================================
+# YYC³（YanYuCloudCube™ · 注册商标）· CI 流水线
+# 言启象限 | 语枢未来
+# ============================================================
+# Copyright (c) 2026 YanYuCloudCube™（YYC³）· admin@0379.email
+# ============================================================
+
+name: YYC3 CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  quality-gate:
+    name: 质量门禁（密钥扫描 · 类型检查 · 单测 · 构建）
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.17.0
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: pnpm
+
+      - name: 安装依赖（frozen-lockfile 保证可复现）
+        run: pnpm install --frozen-lockfile
+
+      - name: 密钥硬编码扫描
+        run: bash scripts/check-secrets.sh
+
+      - name: 依赖漏洞扫描（高危阻断）
+        run: pnpm audit --audit-level high
+
+      - name: TypeScript 类型检查
+        run: pnpm typecheck
+
+      - name: 单元测试
+        run: pnpm test
+
+      - name: 覆盖率报告
+        run: pnpm test:coverage
+
+      - name: 生产构建
+        run: pnpm build
+
+      - name: 上传 Pages 部署产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: 上传覆盖率报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
+
+  deploy-pages:
+    name: GitHub Pages 部署（hailan.yyc3.top）
+    needs: quality-gate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

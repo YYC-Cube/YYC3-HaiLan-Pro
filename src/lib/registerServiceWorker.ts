@@ -2,6 +2,8 @@
  * Service Worker注册和管理
  */
 
+import { getEnv } from '../config/env';
+
 export interface ServiceWorkerConfig {
   onSuccess?: (registration: ServiceWorkerRegistration) => void;
   onUpdate?: (registration: ServiceWorkerRegistration) => void;
@@ -109,7 +111,13 @@ export async function getServiceWorkerVersion(): Promise<string | null> {
         resolve(event.data.version || null);
       };
       
-      navigator.serviceWorker.controller.postMessage(
+      const controller = navigator.serviceWorker.controller;
+      if (!controller) {
+        resolve(null);
+        return;
+      }
+
+      controller.postMessage(
         { type: 'GET_VERSION' },
         [messageChannel.port2]
       );
@@ -132,16 +140,17 @@ export async function clearAllCaches(): Promise<boolean> {
 
   try {
     const registration = await navigator.serviceWorker.ready;
-    if (!registration.active) return false;
+    const activeWorker = registration.active;
+    if (!activeWorker) return false;
 
     return new Promise((resolve) => {
       const messageChannel = new MessageChannel();
-      
+
       messageChannel.port1.onmessage = (event) => {
         resolve(event.data.success || false);
       };
-      
-      registration.active.postMessage(
+
+      activeWorker.postMessage(
         { type: 'CLEAR_CACHE' },
         [messageChannel.port2]
       );
@@ -199,9 +208,9 @@ export async function subscribeToPushNotifications(): Promise<PushSubscription |
       // 创建新订阅
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(
-          (import.meta.env?.VITE_VAPID_PUBLIC_KEY as string) || ''
-        ),
+        applicationServerKey:           urlBase64ToUint8Array(
+          (getEnv().vapidPublicKey) || ''
+          ),
       });
       
       console.log('[Push] Subscribed to push notifications');

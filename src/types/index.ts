@@ -101,6 +101,19 @@ export interface Message {
   suggestions?: string[];
 }
 
+/**
+ * AI 建议项
+ * 用于 AI 助手回复中的可点击引导建议
+ */
+export interface Suggestion {
+  /** 建议唯一标识 */
+  id: string;
+  /** 建议展示文案 */
+  text: string;
+  /** 触发动作：路由路径（以 / 开头）或命令前缀（filter: / open: 等） */
+  action: string;
+}
+
 // --- 通用响应 ---
 
 export interface ApiResponse<T> {

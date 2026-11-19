@@ -41,7 +41,7 @@ export function ModelViewer({ color = "#1A365D" }: ModelViewerProps) {
         <ambientLight intensity={0.5} />
         <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} shadow-bias={-0.0001} />
         
-        <Stage environment="city" intensity={0.5} contactShadow={false}>
+        <Stage environment="city" intensity={0.5} shadows={false}>
             <ProductModel color={color} />
         </Stage>
         
