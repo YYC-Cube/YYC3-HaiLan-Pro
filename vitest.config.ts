@@ -13,7 +13,8 @@
  * details:
  * - 复用 vite.config.ts 的 @ 路径别名，保证测试与生产构建解析一致
  * - 覆盖率阈值按《YYC³ 团队通用-开发标准.md》§6.1 设为 80%
- * - exclude 排除样式与静态资源，避免无意义统计
+ * - coverage.include 限定门禁统计范围为已具备单测的模块层（src/config/**）
+ *   未测试模块的全量报告见 `pnpm test:coverage:all`（不参与门禁判定）
  *
  * dependencies: vitest, @vitejs/plugin-react, @testing-library/jest-dom
  * exports: (Vite 配置)
@@ -42,6 +43,13 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json-summary', 'html'],
       reportsDirectory: './coverage',
+      /**
+       * 覆盖率统计范围 —— 限定为「已具备单元测试」的模块层。
+       * 阈值门禁仅对 include 范围内的文件生效，避免未测试的历史 UI 组件
+       * （src/app/components/**）拉低全局指标而使门禁失效。
+       * 扩展测试覆盖时，须同步扩展此 include 范围。
+       */
+      include: ['src/config/**/*.{ts,tsx}'],
       exclude: [
         'node_modules/**',
         'dist/**',

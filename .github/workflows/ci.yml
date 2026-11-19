@@ -51,7 +51,7 @@ jobs:
         run: bash scripts/check-secrets.sh
 
       - name: 依赖漏洞扫描（高危阻断）
-        run: pnpm audit --audit-level high
+        run: pnpm audit --audit-level high --registry=https://registry.npmjs.org/
 
       - name: TypeScript 类型检查
         run: pnpm typecheck
@@ -64,6 +64,14 @@ jobs:
 
       - name: 生产构建
         run: pnpm build
+
+      - name: 校验 Pages 部署产物
+        run: |
+          set -euo pipefail
+          test -f dist/index.html || { echo "❌ 缺少 dist/index.html"; exit 1; }
+          test -f dist/CNAME    || { echo "❌ 缺少 dist/CNAME（自定义域将失效）"; exit 1; }
+          test -f dist/404.html  || { echo "❌ 缺少 dist/404.html（SPA 回退失效）"; exit 1; }
+          echo "✅ Pages 产物校验通过：index.html / CNAME / 404.html 均就位"
 
       - name: 上传 Pages 部署产物
         uses: actions/upload-pages-artifact@v3

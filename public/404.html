@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>海蓝 HaiLan</title>
+  <script>
+    // GitHub Pages SPA 回退：未知路径回退到应用入口
+    (function () {
+      var l = window.location;
+      l.replace(
+        l.protocol + '//' + l.host + '/' +
+        'index.html' +
+        l.search +
+        l.hash
+      );
+    })();
+  </script>
+  <meta http-equiv="refresh" content="0; url=/index.html" />
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    .wrap { text-align: center; }
+    h1 { font-size: 1.25rem; font-weight: 600; margin: 0 0 0.5rem; }
+    p { font-size: 0.875rem; color: #64748b; margin: 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>正在进入海蓝 HaiLan</h1>
+    <p>若未自动跳转，请点击 <a href="/index.html">返回首页</a></p>
+  </div>
+</body>
+</html>

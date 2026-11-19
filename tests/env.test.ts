@@ -25,9 +25,17 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 type EnvModule = typeof import('../src/config/env');
 
-async function loadEnv(env: Record<string, string | undefined>): Promise<EnvModule> {
+interface LoadEnvOptions {
+  /** 是否处于生产模式（影响 assertEnvReady 的告警通道与降级提示） */
+  prod?: boolean;
+}
+
+async function loadEnv(
+  env: Record<string, string | undefined>,
+  options: LoadEnvOptions = {}
+): Promise<EnvModule> {
   vi.resetModules();
-  vi.stubEnv('PROD', false);
+  vi.stubEnv('PROD', options.prod ?? false);
   Object.entries(env).forEach(([key, value]) => {
     vi.stubEnv(key, value);
   });
@@ -146,6 +154,15 @@ describe('env . 环境变量配置模块', () => {
       });
       expect(getEnv().useRealBackend).toBe(false);
     });
+
+    it('无法识别的取值应回退至默认值 false', async () => {
+      const { getEnv } = await loadEnv({
+        VITE_API_BASE_URL: 'https://example.invalid/api',
+        VITE_API_ANON_KEY: 'test-key',
+        VITE_USE_REAL_BACKEND: 'maybe',
+      });
+      expect(getEnv().useRealBackend).toBe(false);
+    });
   });
 
   describe('assertEnvReady . 启动期自检', () => {
@@ -170,6 +187,46 @@ describe('env . 环境变量配置模块', () => {
 
       expect(result?.ready).toBe(false);
     });
+
+    it('真实后端模式启用时应输出启用提示', async () => {
+      const infoSpy = vi.spyOn(console, 'info').mockImplementation(() => undefined);
+
+      const { assertEnvReady } = await loadEnv({
+        VITE_API_BASE_URL: 'https://example.invalid/api',
+        VITE_API_ANON_KEY: 'test-key',
+        VITE_USE_REAL_BACKEND: 'true',
+      });
+
+      const result = assertEnvReady();
+
+      expect(result.ready).toBe(true);
+      expect(result.env.useRealBackend).toBe(true);
+      expect(infoSpy).toHaveBeenCalledWith(
+        '[Env] 真实后端模式已启用 · baseUrl =',
+        'https://example.invalid/api'
+      );
+
+      infoSpy.mockRestore();
+    });
+
+    it('生产环境缺失凭证时应通过 console.error 告警', async () => {
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+      const { assertEnvReady } = await loadEnv({}, { prod: true });
+
+      const result = assertEnvReady();
+
+      expect(result.ready).toBe(false);
+      expect(result.env.isProd).toBe(true);
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[Env][Production]')
+      );
+      expect(warnSpy).not.toHaveBeenCalled();
+
+      errorSpy.mockRestore();
+      warnSpy.mockRestore();
+    });
   });
 
   describe('describeEnvStatus . 脱敏诊断', () => {
@@ -188,6 +245,18 @@ describe('env . 环境变量配置模块', () => {
       const { describeEnvStatus } = await loadEnv({});
 
       expect(describeEnvStatus()).toContain('(未配置)');
+    });
+
+    it('长度不超过 8 位的密钥应整体掩码为 ***', async () => {
+      const { describeEnvStatus } = await loadEnv({
+        VITE_API_BASE_URL: 'https://example.invalid/api',
+        VITE_API_ANON_KEY: 'short',
+      });
+
+      const status = describeEnvStatus();
+
+      expect(status).not.toContain('short');
+      expect(status).toContain('apiAnonKey=***');
     });
   });
 });
